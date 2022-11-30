@@ -6,7 +6,7 @@ By Brandon Woo
 
 <br>**Step 1: DO Setup**
 - Create 2 Droplets, a VPC, a Load Balancer, and a Firewall.
-- The firewall should be configured to allow HTTP traffic to the load balancer
+- The firewall should be configured to allow HTTP traffic on port 5050 to the load balancer
 ![](./images/droplets.png)
 ![](./images/vpc-img.png)
 ![](./images/load-bal-img.png)
@@ -62,3 +62,96 @@ sudo cp caddy /usr/bin/
 mkdir 2420-assign-two
 ```
 ![](./images/mkass2.png)
+- Create two directories called `html` and `src`
+```
+mkdir html && mkdir src
+```
+![](./images/htmlandsrc.png)
+- Inside html directory create an `index.html` page and add some content to it
+```
+cd html
+vim index.html
+```
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cookies</title>
+</head>
+<body>
+    <h1>Cookie Stealer</h1>
+    <ul>
+        <li>Cookie 1 is mine</li>
+        <li>Cookie 2 is mine</li>
+        <li>Cookie 3 you can keep</li>
+    </ul>
+</body>
+</html>
+```
+![](./images/vimindex.png)
+![](./images/htmlforindex.png)
+- Inside of the src directory run the following command
+```
+npm init
+```
+- follow the instructions to create the npm files
+![](./images/npm-init.png)
+- now run
+```
+npm i fastify
+```
+![](./images/npm-fastify.png)
+
+- create an `index.js` file and put the following content in it
+```
+// Require the framework and instantiate it
+const fastify = require('fastify')({ logger: true })
+
+// Declare a route
+fastify.get('/', async (request, reply) => {
+  return { hello: 'Server x' }
+})
+
+// Run the server!
+const start = async () => {
+  try {
+    await fastify.listen({ port: 3000 })
+  } catch (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+}
+start()
+```
+![](./images/indexjs.png)
+![](./images/vimindexjs.png)
+- we will have to change some things to this file later
+- Install Volta then install node using
+```
+curl https://get.volta.sh | bash
+source ~./.bashrc
+volta install node
+which npm
+```
+- It should look like this
+![](./images/installvolta.png)
+- Test the server with
+```
+node index.js
+```
+- and follow the link, it should look like this
+![](./images/successtest.png)
+- move the files to both of your droplets with sftp
+```
+sftp -i "~/.ssh/DO_key" ocean@165.232.159.95
+put 2420-assign-two
+```
+or
+
+```
+rsync -r 2420-assign-two "ocean@165.232.159.95:~/" -e "ssh -i ~/.ssh/DO_key -o StrictHostKeyChecking=no"
+```
+![](./images/sftp.png)
