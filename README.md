@@ -7,7 +7,7 @@ http://24.199.69.253/api
 
 ## Tutorial
 
-<br>**Step 1: DO Setup**
+### Step 1: DO Setup
 - Create 2 Droplets, a VPC, a Load Balancer, and a Firewall.
 - The firewall should be configured to allow HTTP traffic on port 5050 to the load balancer
 ![](./images/droplets.png)
@@ -15,13 +15,13 @@ http://24.199.69.253/api
 ![](./images/load-bal-img.png)
 ![](./images/firewall-img.png)
 
-<br>**Step 2: Create 2 users**
+### Step 2: Create 2 users
 - SSH into both droplets and create a user for each of them
 - you can use the same name and same password for both
 ![](./images/first_user.png)
 ![](./images/second_user.png)
 
-<br>**Step 3: Installing Web Servers**
+### Step 3: Installing Web Servers
 - install Caddy on both droplets
 - make sure to run these 2 commands before installing
 ```
@@ -59,7 +59,7 @@ sudo cp caddy /usr/bin/
 
 <br>**MAKE SURE TO DO THIS ENTIRE STEP ON BOTH DROPLETS**
 
-<br>**Step 4: Writing the webapp**
+### Step 4: Writing the webapp
 - On your local machine, create a new directory
 ```
 mkdir 2420-assign-two
@@ -178,7 +178,7 @@ rsync -r 2420-assign-two "ocean@165.232.159.95:~/" -e "ssh -i ~/.ssh/DO_key -o S
 ```
 ![](./images/sftp.png)
 
-<br>**Step 5: Make the Caddyfile**
+### Step 5: Make the Caddyfile
 - make a caddyfile with
 ```
 vim Caddyfile
@@ -256,7 +256,7 @@ sudo mv ./2420-assign-two/html /var/www
 ![](./images/mvsrc.png)
 ![](./images/mvhtml.png)
 
-<br>**Step 6: install volta on droplets**
+### Step 6: install volta on droplets
 
 - Install Volta then install node using
 ```
@@ -269,7 +269,7 @@ which npm
 - It should look like this
 ![](./images/insatllvoltaserver.png)
 
-<br> **Step 7: Write the node service file**
+### Step 7: Write the node service file
 - Create a service file called `hello_web.service` on your local machine and add the following content:
 ```
 [Unit]
@@ -287,7 +287,7 @@ SyslogIdentifier=hello_web
 [Install]
 WantedBy=multi-user.target
 ```
-**Step 8: Moving the node service file**
+### Step 8: Moving the node service file
 ![](./images/nodeserv.png)
 - put this file on both droplets using sftp and move it to the `/etc/systemd/system`
 ![](./images/nodeservmv.png)
@@ -324,7 +324,7 @@ sudo systemctl status hello_web.service
 </body>
 </html>
 ```
-<br>**Step 9**
+### Step 9: Testing
 - Test that you can connect to the server, it should look like this
 ![](./images/firstsuccess.png)
 - if you hit refresh multiple times, it should at some point look different
