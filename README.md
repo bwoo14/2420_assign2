@@ -333,9 +333,9 @@ sudo systemctl restart hello_web.service
 ![](./images/web_serv_res.png)
 ### Step 9: Testing
 - Test that you can connect to the server, it should look like this
-![](./images/firstsuccess.png)
+<br>![](./images/firstsuccess.png)
 - if you hit refresh multiple times, it should at some point look different
-![](./images/secondsuccess.png)
+<br>![](./images/secondsuccess.png)
 - the api route should look like this
-![](./images/apisuccess.png)
-![](./images/apiservery.png)
+<br>![](./images/apisuccess.png)
+<br>![](./images/apiservery.png)
