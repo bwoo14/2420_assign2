@@ -1,0 +1,14 @@
+[Unit]
+Description=node application service file
+After=network.target
+
+[Service]
+Type=simple
+User=ocean
+Group=ocean
+ExecStart=/home/ocean/.volta/bin/node /var/www/src/index.js
+Restart=on-failure
+SyslogIdentifier=hello_web
+
+[Install]
+WantedBy=multi-user.target

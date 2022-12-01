@@ -2,6 +2,9 @@
 
 By Brandon Woo
 
+http://24.199.69.253/ <br>
+http://24.199.69.253/api
+
 ## Tutorial
 
 <br>**Step 1: DO Setup**
@@ -92,7 +95,6 @@ vim index.html
 </html>
 ```
 ![](./images/vimindex.png)
-![](./images/htmlforindex.png)
 - Inside of the src directory run the following command
 ```
 npm init
@@ -128,11 +130,10 @@ start()
 ```
 ![](./images/indexjs.png)
 ![](./images/vimindexjs.png)
-- we will have to change some things to this file later
 - Install Volta then install node using
 ```
 curl https://get.volta.sh | bash
-source ~./.bashrc
+source ~/.bashrc
 volta install node
 which npm
 ```
@@ -144,6 +145,27 @@ node index.js
 ```
 - and follow the link, it should look like this
 ![](./images/successtest.png)
+- after testing change the index.js file to contain the right route and the right port (`/api`, and `5050`)
+```
+// Require the framework and instantiate it
+const fastify = require('fastify')({ logger: true })
+
+// Declare a route
+fastify.get('/', async (request, reply) => {
+  return { hello: 'Server x' }
+})
+
+// Run the server!
+const start = async () => {
+  try {
+    await fastify.listen({ port: 3000 })
+  } catch (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+}
+start()
+```
 - move the files to both of your droplets with sftp
 ```
 sftp -i "~/.ssh/DO_key" ocean@165.232.159.95
@@ -155,3 +177,157 @@ or
 rsync -r 2420-assign-two "ocean@165.232.159.95:~/" -e "ssh -i ~/.ssh/DO_key -o StrictHostKeyChecking=no"
 ```
 ![](./images/sftp.png)
+
+<br>**Step 5: Make the Caddyfile**
+- make a caddyfile with
+```
+vim Caddyfile
+```
+
+-  add the following content
+```
+http:// {
+    root * /var/www/html
+    reverse_proxy /api localhost:5050
+    file_server
+}
+```
+![](./images/vimcad.png)
+![](./images/caddyfilecontent.png)
+- upload the caddy file to **BOTH** droplets using sftp
+![](./images/caddysftp.png)
+- On each droplet: move the caddy script we installed earlier to /usr/bin
+![](./images/copyscript.png)
+- make a directory in /etc called caddy
+```
+sudo mkdir /etc/caddy
+```
+![](./images/mkdircaddy.png)
+- move the Caddyfile we made to the /etc/caddy directory
+```
+sudo mv Caddyfile /etc/caddy
+```
+![](./images/mvcaddy.png)
+
+- create a service file for the caddy server
+```
+vim caddy.service
+```
+- and put this inside
+```
+[Unit]
+Description=Serve HTML in /var/www using caddy
+After=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/caddy run --config /etc/caddy/Caddyfile
+ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile
+TimeoutStopSec=5
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
+```
+![](./images/cadserv.png)
+- move the file to the /etc/systemd/system
+```
+sudo mv caddy.service /etc/systemd/system
+```
+![](./images/mvserv.png)
+
+- restart, start, and enable the service
+```
+sudo systemctl daemon-reload
+sudo systemctl start caddy.service
+sudo systemctl enable caddy.service
+```
+![](./images/reload.png)
+
+- make a directory called `www` in the `/var` directory with
+```
+cd /var && mkdir www
+```
+- move the `src` and the `html` directory we uploaded to the `/var/www` directory
+```
+sudo mv ./2420-assign-two/src /var/www
+sudo mv ./2420-assign-two/html /var/www
+```
+![](./images/mvsrc.png)
+![](./images/mvhtml.png)
+
+<br>**Step 6: install volta on droplets**
+
+- Install Volta then install node using
+```
+curl https://get.volta.sh | bash
+source ~/.bashrc
+volta install node
+volta install npm
+which npm
+```
+- It should look like this
+![](./images/insatllvoltaserver.png)
+
+<br> **Step 7: Write the node service file**
+- Create a service file called `hello_web.service` on your local machine and add the following content:
+```
+[Unit]
+Description=node application service file
+After=network.target
+
+[Service]
+Type=simple
+User=ocean
+Group=ocean
+ExecStart=/home/ocean/.volta/bin/node /var/www/src/index.js
+Restart=on-failure
+SyslogIdentifier=hello_web
+
+[Install]
+WantedBy=multi-user.target
+```
+**Step 8: Moving the node service file**
+![](./images/nodeserv.png)
+- put this file on both droplets using sftp and move it to the `/etc/systemd/system`
+![](./images/nodeservmv.png)
+- reload the daemon again with
+```
+sudo systemctl daemon-reload
+sudo systemctl start hello_web.service
+sudo systemctl enable hello_web.service
+```
+- check that the service is working with
+```
+sudo systemctl status hello_web.service
+```
+![](./images/statushello.png)
+- do this on both droplets
+- Make sure to change one of the html documents so that you can tell if your load balancer is working
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cookies</title>
+</head>
+<body>
+    <h1>Cookie Stealer</h1>
+    <ul>
+        <li>Cookie 1 is mine</li>
+        <li>Cookie 2 is mine</li>
+        <li>Cookie 3 you can keep</li>
+    </ul>
+    <p>THIS IS SERVER 2</p>
+</body>
+</html>
+```
+<br>**Step 9**
+- Test that you can connect to the server, it should look like this
+![](./images/firstsuccess.png)
+- if you hit refresh multiple times, it should at some point look different
+![](./images/secondsuccess.png)
+- the api route should look like this
+![](./images/apisuccess.png)
