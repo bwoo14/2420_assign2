@@ -326,6 +326,11 @@ sudo systemctl status hello_web.service
 ```
 - Also change the index.js file so that it is slightly different in the `/api` route. For example you can change the `return {hello: 'Server x'}` to `return {hello: 'Server x'}`
 ![](./images/servery.png)
+- Make sure to do restart the web service after making changes to the html or js
+```
+sudo systemctl restart hello_web.service
+```
+![](./images/web_serv_res.png)
 ### Step 9: Testing
 - Test that you can connect to the server, it should look like this
 ![](./images/firstsuccess.png)
