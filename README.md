@@ -142,7 +142,7 @@ start()
 ```
 ![](./images/indexjs.png)
 ![](./images/vimindexjs.png)
-- Install Volta then install node using
+- Install Volta then install node using volta
 ```
 curl https://get.volta.sh | bash
 source ~/.bashrc
@@ -270,7 +270,7 @@ sudo mv ./2420-assign-two/html /var/www
 
 ### Step 6: install volta on droplets
 
-- Install Volta then install node using
+- Install Volta then install node on both droplets using
 ```
 curl https://get.volta.sh | bash
 source ~/.bashrc
@@ -336,9 +336,9 @@ sudo systemctl status hello_web.service
 </body>
 </html>
 ```
-- Also change the index.js file so that it is slightly different in the `/api` route. For example you can change the `return {hello: 'Server x'}` to `return {hello: 'Server x'}`
+- Also change the index.js file so that it is slightly different in the `/api` route. For example you can change the `return {hello: 'Server x'}` to `return {hello: 'Server y'}`
 ![](./images/servery.png)
-- Make sure to do restart the web service after making changes to the html or js
+- Make sure to restart the web service after making changes to the html or js
 ```
 sudo systemctl restart hello_web.service
 ```
